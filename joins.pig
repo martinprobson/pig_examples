@@ -1,0 +1,13 @@
+a = load 'data/depts.csv' using PigStorage(',') as (dept_id:chararray,dept_name:chararray);
+b = FILTER a BY dept_id != 'Dept_ID';
+depts = FOREACH b GENERATE dept_id,dept_name;
+c = LOAD 'data/emps.csv' USING PigStorage(',') AS (emp_no:chararray,emp_name:chararray,dept_id:chararray);
+d = FILTER c BY emp_no != 'Empl_No';
+emps = FOREACH d GENERATE emp_no,emp_name,dept_id;
+innerjoin = JOIN emps BY dept_id, depts BY dept_id USING 'replicated';
+--DESCRIBE innerjoin;
+DUMP innerjoin;
+--t = FILTER innerjoin BY emps::emp_no == '1';
+--DUMP t;
+--cog = COGROUP emps BY dept_id, depts BY dept_id;
+--DUMP cog;
